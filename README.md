@@ -4,7 +4,6 @@ Write the docstring, call the function, get the results.
 
 [![PyPI](https://img.shields.io/pypi/v/ai-ghostfunctions.svg)][pypi status]
 [![Status](https://img.shields.io/pypi/status/ai-ghostfunctions.svg)][pypi status]
-
 [![Tests](https://github.com/bmritz/ai-ghostfunctions/workflows/Tests/badge.svg)][tests]
 
 [pypi status]: https://pypi.org/project/ai-ghostfunctions/
