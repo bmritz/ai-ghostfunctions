@@ -105,7 +105,8 @@ def ghostfunction(
         @wraps(function)
         def wrapper(**kwargs_inner: Any) -> openai.openai_object.OpenAIObject:
             prompt = prompt_function(function, **kwargs_inner)  # type: ignore[arg-type]
-            return ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
+            ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
+            return ai_result["choices"][0]["message"]["content"]
 
         return wrapper
 
@@ -117,7 +118,8 @@ def ghostfunction(
             @wraps(function_to_be_decorated)
             def wrapper(**kwargs_inner: Any) -> openai.openai_object.OpenAIObject:
                 prompt = prompt_function(function_to_be_decorated, **kwargs_inner)
-                return ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
+                ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
+                return ai_result["choices"][0]["message"]["content"]
 
             return wrapper
 
