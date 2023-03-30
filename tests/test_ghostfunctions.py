@@ -23,13 +23,17 @@ def test_aicallable_function_decorator_has_same_signature() -> None:
 
 
 def test_aicallable_function_decorator() -> None:
-    expected_result = openai.openai_object.OpenAIObject(
-        {"result": "returned value from openai"}
+    expected_result = "returned value from openai"
+
+    mock_callable = Mock(
+        return_value=openai.openai_object.OpenAIObject.construct_from(
+            {"choices": [{"message": {"content": expected_result}}]}
+        )
     )
     with patch.object(
         ai_ghostfunctions.ghostfunctions,
         "_default_ai_callable",
-        return_value=lambda messages: expected_result,
+        return_value=mock_callable,
     ) as patched:
 
         @ghostfunction
@@ -44,13 +48,17 @@ def test_aicallable_function_decorator() -> None:
 
 
 def test_aicallable_function_decorator_with_open_close_parens() -> None:
-    expected_result = openai.openai_object.OpenAIObject(
-        {"result": "returned value from openai"}
+    expected_result = "returned value from openai"
+
+    mock_callable = Mock(
+        return_value=openai.openai_object.OpenAIObject.construct_from(
+            {"choices": [{"message": {"content": expected_result}}]}
+        )
     )
     with patch.object(
         ai_ghostfunctions.ghostfunctions,
         "_default_ai_callable",
-        return_value=lambda messages: expected_result,
+        return_value=mock_callable,
     ) as patched:
 
         @ghostfunction()
@@ -67,10 +75,13 @@ def test_aicallable_function_decorator_with_open_close_parens() -> None:
 def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
     new_prompt = [Message(role="user", content="this is a new prompt")]
 
-    expected_result = openai.openai_object.OpenAIObject(
-        {"result": "returned value from openai"}
+    expected_result = "returned value from openai"
+
+    mock_callable = Mock(
+        return_value=openai.openai_object.OpenAIObject.construct_from(
+            {"choices": [{"message": {"content": expected_result}}]}
+        )
     )
-    mock_callable = Mock(return_value=expected_result)
     with patch.object(
         ai_ghostfunctions.ghostfunctions,
         "_default_ai_callable",
@@ -86,4 +97,4 @@ def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
         patched.assert_called_once()
     mock_callable.assert_called_once_with(messages=new_prompt)
 
-    assert result == expected_result
+    assert result == "returned value from openai"
