@@ -90,7 +90,7 @@ See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py#48) for the de
 ## Requirements
 
 - [![Python Version](https://img.shields.io/pypi/pyversions/ai-ghostfunctions)][pypi status]
--
+- openai Python client library
 
 ## Usage
 
