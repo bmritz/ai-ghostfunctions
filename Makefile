@@ -4,13 +4,14 @@ $(foreach bin,$(REQUIRED),\
 
 REPOSITORY_ROOT := $(PWD)
 
-help:           			## Show this help.
-	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+help:	## Show this help. (Default target)
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
+.DEFAULT_GOAL := help
 
 .PHONY : install install-poetry run-nox-all run-nox-session format run-quick-test ipython-shell
 
-install-poetry: .poetry/bin/poetry
+install-poetry: .poetry/bin/poetry	## Install poetry in the project.
 	$< install
 
 install: install-poetry		## install all dependencies for development
@@ -33,15 +34,15 @@ list-of-nox-sessions-print: .poetry/bin/poetry
 run-quick-test: .poetry/bin/poetry			## Run all nox sessions
 	$< run pytest
 
-ipython-shell: .poetry/bin/poetry
+ipython-shell: .poetry/bin/poetry	## Fire up an ipython shell with dependencies available in the environment.
 	$< run ipython
 
-format: .poetry/bin/poetry
+format: .poetry/bin/poetry	## Format the code by running isort and black on the repo.
 	$< run isort .
 	$< run black .
 
-new-version-%: .poetry/bin/poetry
+new-version-%: .poetry/bin/poetry	## Make a new version. Use: make new-version-<patch|minor|major|prepatch|preminor|premajor|prerelease>
 	$< version -- $*
 
-guard-%: .poetry/bin/poetry
+guard-%: .poetry/bin/poetry		## Used to ensure an env var is available for a target that depends on guard-%
 	@if [ -z '${${*}}' ]; then echo 'Variable $* not set. You can set it with $*=VALUE make ...' && exit 1; fi
