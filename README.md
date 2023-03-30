@@ -71,20 +71,20 @@ from ai_ghostfunctions.types import Message
 assert os.getenv("OPENAI_API_KEY")
 
 @ghostfunction(prompt_function=lambda f, **kwargs: [
-    Message(role=USER, content=f"tell me a joke about this function name: {f.__name__}")
+    Message(role=USER, content=f"tell me a joke about this function name: {f.__name__}. The docstring of the function is {f.__doc__}")
 ])
 def recursive_function_that_will_recurse():
     """Recurse until you go crazy."""
     pass
 
 recursive_function_that_will_recurse()
-# "Why did the function go to therapy? Because it had a serious case of recursive_function_that_will_recurse and couldn't stop calling itself!"
+# 'Why did the programmer have to take a break after using the recursive_function_that_will_recurse?\n\nBecause they realized that eventually, there would be no escape. The docstring warned them: "Recurse until you go crazy!"'
 
 ```
 
 Prompts to gpt-4 and gpt-3.5-turbo are lists of `types.Message`.
 
-See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py) for the default prompt.
+See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py#48) for the default prompt.
 
 ## Requirements
 
