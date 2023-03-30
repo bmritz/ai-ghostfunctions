@@ -24,11 +24,12 @@ def test_aicallable_function_decorator_has_same_signature() -> None:
 
 
 def test_aicallable_function_decorator() -> None:
-    expected_result = "returned value from openai"
+    expected_result = ["returned value from openai"]
+    mock_return_result = str(expected_result)
 
     mock_callable = Mock(
         return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": expected_result}}]}
+            {"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -49,11 +50,12 @@ def test_aicallable_function_decorator() -> None:
 
 
 def test_aicallable_function_decorator_with_open_close_parens() -> None:
-    expected_result = "returned value from openai"
+    expected_result = ["returned value from openai"]
+    mock_return_result = str(expected_result)
 
     mock_callable = Mock(
         return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": expected_result}}]}
+            {"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -76,11 +78,12 @@ def test_aicallable_function_decorator_with_open_close_parens() -> None:
 def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
     new_prompt = [Message(role="user", content="this is a new prompt")]
 
-    expected_result = "returned value from openai"
+    expected_result = ["returned value from openai"]
+    mock_return_result = str(expected_result)
 
     mock_callable = Mock(
         return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": expected_result}}]}
+            {"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -98,7 +101,7 @@ def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
         patched.assert_called_once()
     mock_callable.assert_called_once_with(messages=new_prompt)
 
-    assert result == "returned value from openai"
+    assert result == expected_result
 
 
 def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:

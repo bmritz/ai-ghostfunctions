@@ -1,4 +1,5 @@
 """The AICallable class."""
+import ast
 import inspect
 import os
 from functools import wraps
@@ -113,11 +114,11 @@ def ghostfunction(
         _assert_function_has_return_type_annotation(function)
 
         @wraps(function)
-        def wrapper(**kwargs_inner: Any) -> str:
+        def wrapper(**kwargs_inner: Any) -> Any:
             prompt = prompt_function(function, **kwargs_inner)  # type: ignore[arg-type]
             ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
             to_return: str = ai_result["choices"][0]["message"]["content"]
-            return to_return
+            return ast.literal_eval(to_return)
 
         return wrapper
 
@@ -129,11 +130,11 @@ def ghostfunction(
             _assert_function_has_return_type_annotation(function_to_be_decorated)
 
             @wraps(function_to_be_decorated)
-            def wrapper(**kwargs_inner: Any) -> str:
+            def wrapper(**kwargs_inner: Any) -> Any:
                 prompt = prompt_function(function_to_be_decorated, **kwargs_inner)
                 ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
                 to_return: str = ai_result["choices"][0]["message"]["content"]
-                return to_return
+                return ast.literal_eval(to_return)
 
             return wrapper
 
