@@ -15,8 +15,6 @@ Write the docstring, call the function, get the results.
 
 ## Installation
 
-You can install via [pip] from [PyPI]:
-
 ```console
 $ pip install ai-ghostfunctions
 ```
