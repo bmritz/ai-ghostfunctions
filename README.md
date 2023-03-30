@@ -5,9 +5,7 @@ Write the docstring, call the function, get the results.
 [![PyPI](https://img.shields.io/pypi/v/ai-ghostfunctions.svg)][pypi status]
 [![Status](https://img.shields.io/pypi/status/ai-ghostfunctions.svg)][pypi status]
 
-[![Read the documentation at https://ai-ghostfunctions.readthedocs.io/](https://img.shields.io/readthedocs/ai-ghostfunctions/latest.svg?label=Read%20the%20Docs)][read the docs]
 [![Tests](https://github.com/bmritz/ai-ghostfunctions/workflows/Tests/badge.svg)][tests]
-[![Codecov](https://codecov.io/gh/bmritz/ai-ghostfunctions/branch/main/graph/badge.svg)][codecov]
 
 [pypi status]: https://pypi.org/project/ai-ghostfunctions/
 [read the docs]: https://ai-ghostfunctions.readthedocs.io/
@@ -55,6 +53,8 @@ generate_random_words(n=3, startswith="foot")
 ```
 
 By default, a ghostfunction will dispatch a sensible prompt to OpenAI GPT-4 that includes the function name, the docstring, and function arguments, parse the result from OpenAI and return it as the result of the function.
+
+Ghostfunctions will retry and send the data to gpt-3.5-turbo if it looks like the OPENAI_API_KEY does not have access to gpt-4.
 
 Yes, it returns strings for now. I'll update that probably soon, so expect a breaking change there.
 
