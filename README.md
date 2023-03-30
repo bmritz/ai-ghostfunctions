@@ -73,9 +73,12 @@ assert os.getenv("OPENAI_API_KEY")
 @ghostfunction(prompt_function=lambda f, **kwargs: [
     Message(role=USER, content=f"tell me a joke about this function name: {f.__name__}")
 ])
-def generate_random_words(n: int, startswith: str) -> list:
-    """Return a list of `n` random words that start with `startswith`."""
+def recursive_function_that_will_recurse():
+    """Recurse until you go crazy."""
     pass
+
+recursive_function_that_will_recurse()
+# "Why did the function go to therapy? Because it had a serious case of recursive_function_that_will_recurse and couldn't stop calling itself!"
 
 ```
 
