@@ -1,0 +1,13 @@
+{
+  "_template": "cookiecutter-hypermodern-python",
+  "author": "Brian M. Ritz",
+  "copyright_year": "2023",
+  "development_status": "Development Status :: 3 - Alpha",
+  "email": "brianmritz@gmail.com",
+  "friendly_name": "AI Ghostfunctions",
+  "github_user": "bmritz",
+  "license": "MIT",
+  "package_name": "ai_ghostfunctions",
+  "project_name": "ai-ghostfunctions",
+  "version": "0.0.0"
+}
