@@ -92,10 +92,6 @@ See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py#48) for the de
 - [![Python Version](https://img.shields.io/pypi/pyversions/ai-ghostfunctions)][pypi status]
 - openai Python client library
 
-## Usage
-
-Please see the [Command-line Reference] for details.
-
 ## Contributing
 
 Contributions are very welcome.
