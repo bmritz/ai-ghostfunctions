@@ -50,7 +50,7 @@ def generate_random_words(n: int, startswith: str) -> list:
 generate_random_words(n=4, startswith="goo")
 # "['gooze', 'goonie', 'gooble', 'goodum']"
 
-generate_random_words(n=2, startswith="foot")
+generate_random_words(n=3, startswith="foot")
 # "['football', 'footstep', 'footnote']"
 ```
 
