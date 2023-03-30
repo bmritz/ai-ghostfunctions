@@ -37,15 +37,15 @@ def sanitize_messy_string(messy_string: str) -> list[dict]:
     """Return a list of dicts that contain the data from `messy_string`."""
     pass
 
-sanitize_messy_string(messy_string="""name|age|nickname
-John Brighton Bradford,  34,  J.B
-        Grace B., "24", Grace""")
-# '[\n    {"name": "John Brighton Bradford", "age": 34, "nickname": "J.B"},\n    {"name": "Grace B.", "age": 24, "nickname": "Grace"}\n]'
-
 @ghostfunction
 def generate_random_words(n: int, startswith: str) -> list:
     """Return a list of `n` random words that start with `startswith`."""
     pass
+
+sanitize_messy_string(messy_string="""name|age|nickname
+John Brighton Bradford,  34,  J.B
+        Grace B., "24", Grace""")
+# '[\n    {"name": "John Brighton Bradford", "age": 34, "nickname": "J.B"},\n    {"name": "Grace B.", "age": 24, "nickname": "Grace"}\n]'
 
 generate_random_words(n=4, startswith="goo")
 # "['gooze', 'goonie', 'gooble', 'goodum']"
@@ -71,20 +71,21 @@ from ai_ghostfunctions.types import Message
 assert os.getenv("OPENAI_API_KEY")
 
 @ghostfunction(prompt_function=lambda f, **kwargs: [
-    Message(role=USER, content=f"tell me a joke about this function name: {f.__name__}")
+    Message(role=USER, content=f"tell me a slightly insulting joke about this function name: {f.__name__}.")
 ])
 def recursive_function_that_will_recurse():
     """Recurse until you go crazy."""
     pass
 
 recursive_function_that_will_recurse()
-# "Why did the function go to therapy? Because it had a serious case of recursive_function_that_will_recurse and couldn't stop calling itself!"
-
+# 'Why did the programmer name his function "recursive_function_that_will_recurse"? Because he wanted to make absolutely sure that no one would confuse it for a function that actually does something useful.'
 ```
 
-Prompts to gpt-4 and gpt-3.5-turbo are lists of `types.Message`.
+Heh. Not bad.
 
-See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py) for the default prompt.
+Prompts to gpt-4 and gpt-3.5-turbo are of type `List[ai_ghostfunctions.types.Message]`.
+
+See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py#48) for the default prompt.
 
 ## Requirements
 
