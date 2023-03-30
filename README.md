@@ -62,7 +62,7 @@ You can control the prompt:
 ```python
 import os
 from ai_ghostfunctions import ghostfunction
-from ai_ghostfunctions.keywords import SYSTEM, USER
+from ai_ghostfunctions.keywords import USER
 from ai_ghostfunctions.types import Message
 
 assert os.getenv("OPENAI_API_KEY")
@@ -96,7 +96,7 @@ To learn more, see the [Contributor Guide].
 
 ## License
 
-[![License](https://img.shields.io/pypi/l/ai-ghostfunctions)][license] _AI Ghostfunctions_ is free and open source software.
+[![License](https://img.shields.io/github/license/bmritz/ai-ghostfunctions)][license] _AI Ghostfunctions_ is free and open source software.
 
 ## Issues
 
