@@ -96,9 +96,7 @@ To learn more, see the [Contributor Guide].
 
 ## License
 
-[![License](https://img.shields.io/pypi/l/ai-ghostfunctions)][license]
-
-_AI Ghostfunctions_ is free and open source software.
+[![License](https://img.shields.io/pypi/l/ai-ghostfunctions)][license] _AI Ghostfunctions_ is free and open source software.
 
 ## Issues
 
@@ -107,7 +105,7 @@ please [file an issue] along with a detailed description.
 
 ## Credits
 
-This project was generated from a fork of [@cjolowicz]'s [Hypermodern Python Cookiecutter] template.
+This project was generated from a [fork](https://github.com/bmritz/cookiecutter-hypermodern-python) of [@cjolowicz]'s [Hypermodern Python Cookiecutter] template.
 
 [@cjolowicz]: https://github.com/cjolowicz
 [pypi]: https://pypi.org/
