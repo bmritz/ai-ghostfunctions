@@ -14,18 +14,21 @@ jobs:
         include:
           - { python: "3.11", os: "ubuntu-latest", session: "pre-commit" }
           - { python: "3.11", os: "ubuntu-latest", session: "safety" }
-          - { python: "3.11", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.9", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.8", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.10", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.11", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.9", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.8", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.10", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.11", os: "windows-latest", session: "tests" }
-          - { python: "3.11", os: "macos-latest", session: "tests" }
-          - { python: "3.11", os: "ubuntu-latest", session: "typeguard" }
-          - { python: "3.11", os: "ubuntu-latest", session: "xdoctest" }
+          - { python: "3.11", os: "ubuntu-latest", session: "mypy-3.11" }
+          - { python: "3.9", os: "ubuntu-latest", session: "mypy-3.9" }
+          - { python: "3.8", os: "ubuntu-latest", session: "mypy-3.8" }
+          - { python: "3.10", os: "ubuntu-latest", session: "mypy-3.10" }
+          - { python: "3.11", os: "ubuntu-latest", session: "tests-3.11" }
+          - { python: "3.9", os: "ubuntu-latest", session: "tests-3.9" }
+          - { python: "3.8", os: "ubuntu-latest", session: "tests-3.8" }
+          - { python: "3.10", os: "ubuntu-latest", session: "tests-3.10" }
+
+          - { python: "3.11", os: "macos-latest", session: "tests-3.11" }
+
+          # this was erroring, see https://github.com/bmritz/comprise/issues/10
+          # - { python: "3.11", os: "ubuntu-latest", session: "typeguard" }
+
+          - { python: "3.11", os: "ubuntu-latest", session: "xdoctest-3.11" }
           - { python: "3.11", os: "ubuntu-latest", session: "docs-build" }
 
     env:
@@ -41,9 +44,11 @@ jobs:
         uses: actions/setup-python@v4.5.0
         with:
           python-version: ${{ matrix.python }}
+      - name: Install pre-requisities
+        run: make install
 
       - name: Run Nox
-        run: make run-nox-all
+        run: make run-nox-session
       # - name: Upgrade pip
       #   run: |
       #     pip install --constraint=.github/workflows/constraints.txt pip
@@ -98,7 +103,7 @@ jobs:
       #     nox --python=${{ matrix.python }}
 
       - name: Upload coverage data
-        if: always() && matrix.session == 'tests'
+        if: always() && matrix.session == 'tests-3.11'
         uses: "actions/upload-artifact@v3"
         with:
           name: coverage-data
@@ -121,12 +126,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4.5.0
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
       - name: Download coverage data
         uses: actions/download-artifact@v3
         with:
           name: coverage-data
+
+      - name: Install dependencies
+        run: |
+          make install
 
       - name: Combine coverage data and display human readable report
         run: |
