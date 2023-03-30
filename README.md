@@ -82,7 +82,7 @@ Heh. Not bad.
 
 Prompts to gpt-4 and gpt-3.5-turbo are of type `List[ai_ghostfunctions.types.Message]`.
 
-See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py#48) for the default prompt.
+See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py#L34) for the default prompt.
 
 ## Requirements
 
