@@ -96,7 +96,7 @@ To learn more, see the [Contributor Guide].
 
 ## License
 
-Distributed under the terms of the [![License](https://img.shields.io/pypi/l/ai-ghostfunctions)][license](./LICENSE),
+[![License](https://img.shields.io/pypi/l/ai-ghostfunctions)][license]
 
 _AI Ghostfunctions_ is free and open source software.
 
