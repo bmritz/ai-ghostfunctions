@@ -78,8 +78,10 @@ def _default_ai_callable() -> Callable[..., openai.openai_object.OpenAIObject]:
     openai.api_key = os.environ["OPENAI_API_KEY"]
     openai.organization = os.getenv("OPENAI_ORGANIZATION")
 
-    def f(**kwargs: Any):
-        return openai.ChatCompletion.create(model="gpt-4", **kwargs)
+    def f(**kwargs: Any) -> openai.openai_object.OpenAIObject:
+        create = openai.ChatCompletion.create
+        result: openai.openai_object.OpenAIObject = create(model="gpt-4", **kwargs)  # type: ignore[no-untyped-call]
+        return result
 
     return f
 
@@ -97,9 +99,13 @@ def ghostfunction(
     """Make `function` a ghostfunction, dispatching logic to the AI.
 
     Args:
+        function: The function to decorate
         ai_callable: Function to receives output of prompt_function and return result.
         prompt_function: Function to turn the function into a prompt.
         kwargs: Extra keyword arguments to pass to `ai_callable`.
+
+    Returns:
+        Decorated function that will dispatch function logic to OpenAI.
     """
     if not callable(ai_callable):
         ai_callable = _default_ai_callable()
@@ -107,10 +113,11 @@ def ghostfunction(
     if function is not None:
 
         @wraps(function)
-        def wrapper(**kwargs_inner: Any) -> openai.openai_object.OpenAIObject:
+        def wrapper(**kwargs_inner: Any) -> str:
             prompt = prompt_function(function, **kwargs_inner)  # type: ignore[arg-type]
             ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
-            return ai_result["choices"][0]["message"]["content"]
+            to_return: str = ai_result["choices"][0]["message"]["content"]
+            return to_return
 
         return wrapper
 
@@ -120,10 +127,11 @@ def ghostfunction(
             function_to_be_decorated: Callable[..., Any]
         ) -> Callable[..., Any]:
             @wraps(function_to_be_decorated)
-            def wrapper(**kwargs_inner: Any) -> openai.openai_object.OpenAIObject:
+            def wrapper(**kwargs_inner: Any) -> str:
                 prompt = prompt_function(function_to_be_decorated, **kwargs_inner)
                 ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
-                return ai_result["choices"][0]["message"]["content"]
+                to_return: str = ai_result["choices"][0]["message"]["content"]
+                return to_return
 
             return wrapper
 
