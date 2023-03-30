@@ -4,15 +4,10 @@ Write the docstring, call the function, get the results.
 
 [![PyPI](https://img.shields.io/pypi/v/ai-ghostfunctions.svg)][pypi status]
 [![Status](https://img.shields.io/pypi/status/ai-ghostfunctions.svg)][pypi status]
-[![Python Version](https://img.shields.io/pypi/pyversions/ai-ghostfunctions)][pypi status]
-[![License](https://img.shields.io/pypi/l/ai-ghostfunctions)][license]
 
 [![Read the documentation at https://ai-ghostfunctions.readthedocs.io/](https://img.shields.io/readthedocs/ai-ghostfunctions/latest.svg?label=Read%20the%20Docs)][read the docs]
 [![Tests](https://github.com/bmritz/ai-ghostfunctions/workflows/Tests/badge.svg)][tests]
 [![Codecov](https://codecov.io/gh/bmritz/ai-ghostfunctions/branch/main/graph/badge.svg)][codecov]
-
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)][pre-commit]
-[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)][black]
 
 [pypi status]: https://pypi.org/project/ai-ghostfunctions/
 [read the docs]: https://ai-ghostfunctions.readthedocs.io/
@@ -20,6 +15,14 @@ Write the docstring, call the function, get the results.
 [codecov]: https://app.codecov.io/gh/bmritz/ai-ghostfunctions
 [pre-commit]: https://github.com/pre-commit/pre-commit
 [black]: https://github.com/psf/black
+
+## Installation
+
+You can install via [pip] from [PyPI]:
+
+```console
+$ pip install ai-ghostfunctions
+```
 
 ## Quickstart
 
@@ -30,38 +33,61 @@ from ai_ghostfunctions import ghostfunction
 assert os.getenv("OPENAI_API_KEY")
 
 @ghostfunction
+def sanitize_messy_string(messy_string: str) -> list[dict]:
+    """Return a list of dicts that contain the data from `messy_string`."""
+    pass
+
+sanitize_messy_string(messy_string="""name|age|nickname
+John Brighton Bradford,  34,  J.B
+        Grace B., "24", Grace""")
+
+# "[{'name': 'John Brighton Bradford', 'age': 34, 'nickname': 'J.B'},\n {'name': 'Grace B.', 'age': 24, 'nickname': 'Grace'}]"
+
+@ghostfunction
 def generate_random_words(n: int, startswith: str) -> list:
     """Return a list of `n` random words that start with `startswith`."""
     pass
 
 generate_random_words(n=4, startswith="goo")
-# ['gooze', 'goonie', 'gooble', 'goodum']
+# "['gooze', 'goonie', 'gooble', 'goodum']"
 
 generate_random_words(n=2, startswith="foot")
-# ['gooze', 'goonie', 'gooble', 'goodum']
+# "['football', 'footstep', 'footnote']"
 ```
 
-By default, a ghostfunction will dispatch a sensible prompt to OpenAI GPT-4 that includes the function name, the docstring, and parameters.
+By default, a ghostfunction will dispatch a sensible prompt to OpenAI GPT-4 that includes the function name, the docstring, and function arguments, parse the result from OpenAI and return it as the result of the function.
+
+Yes, it returns strings for now. I'll update that probably soon, so expect a breaking change there.
 
 ## Customizations
 
 You can control the prompt:
 
-## Features
+```python
+import os
+from ai_ghostfunctions import ghostfunction
+from ai_ghostfunctions.keywords import SYSTEM, USER
+from ai_ghostfunctions.types import Message
 
-- TODO
+assert os.getenv("OPENAI_API_KEY")
+
+@ghostfunction(prompt_function=lambda f, **kwargs: [
+    Message(role=USER, content=f"tell me a joke about this function name: {f.__name__}")
+])
+def generate_random_words(n: int, startswith: str) -> list:
+    """Return a list of `n` random words that start with `startswith`."""
+    pass
+
+```
+
+Prompts to gpt-4 and gpt-3.5-turbo are lists of `types.Message`.
+
+See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py) for the default prompt.
 
 ## Requirements
 
-- TODO
-
-## Installation
-
-You can install _AI Ghostfunctions_ via [pip] from [PyPI]:
-
-```console
-$ pip install ai-ghostfunctions
-```
+- [![Python Version](https://img.shields.io/pypi/pyversions/ai-ghostfunctions)][pypi status]
+-
 
 ## Usage
 
@@ -74,7 +100,8 @@ To learn more, see the [Contributor Guide].
 
 ## License
 
-Distributed under the terms of the [MIT license][license],
+Distributed under the terms of the [![License](https://img.shields.io/pypi/l/ai-ghostfunctions)][license](./LICENSE),
+
 _AI Ghostfunctions_ is free and open source software.
 
 ## Issues
@@ -84,7 +111,7 @@ please [file an issue] along with a detailed description.
 
 ## Credits
 
-This project was generated from [@cjolowicz]'s [Hypermodern Python Cookiecutter] template.
+This project was generated from a fork of [@cjolowicz]'s [Hypermodern Python Cookiecutter] template.
 
 [@cjolowicz]: https://github.com/cjolowicz
 [pypi]: https://pypi.org/
