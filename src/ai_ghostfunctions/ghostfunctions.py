@@ -4,7 +4,6 @@ import os
 from functools import wraps
 from typing import Any
 from typing import Callable
-from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -13,20 +12,7 @@ import openai
 from .keywords import ASSISTANT
 from .keywords import SYSTEM
 from .keywords import USER
-from .types import CompletionType
 from .types import Message
-
-
-def _detect_openai_completion_type_from_kwargs(d: Dict[Any, Any]) -> CompletionType:
-    """Detect the OpenAI Completion Type from the args to the function."""
-    if "model" not in d:
-        raise ValueError(
-            "`'model'` was not found in `d`. It doesn't appear that `d` is a dict of"
-            " keyword arguments to an openai api."
-        )
-    if "messages" in d:
-        return "completion"
-    return "chat completion"
 
 
 def _make_chatgpt_message_from_function(
@@ -80,7 +66,11 @@ def _default_ai_callable() -> Callable[..., openai.openai_object.OpenAIObject]:
 
     def f(**kwargs: Any) -> openai.openai_object.OpenAIObject:
         create = openai.ChatCompletion.create
-        result: openai.openai_object.OpenAIObject = create(model="gpt-4", **kwargs)  # type: ignore[no-untyped-call]
+        try:
+            result: openai.openai_object.OpenAIObject = create(model="gpt-4", **kwargs)  # type: ignore[no-untyped-call]
+        except openai.InvalidRequestError:
+            # user may not have access to gpt-4 yet, perhaps they have 3.5
+            result: openai.openai_object.OpenAIObject = create(model="gpt-3.5-turbo", **kwargs)  # type: ignore[no-untyped-call,no-redef]
         return result
 
     return f
