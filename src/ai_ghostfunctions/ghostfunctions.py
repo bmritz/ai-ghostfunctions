@@ -77,7 +77,11 @@ def _default_ai_callable() -> Callable[..., openai.openai_object.OpenAIObject]:
 
     openai.api_key = os.environ["OPENAI_API_KEY"]
     openai.organization = os.getenv("OPENAI_ORGANIZATION")
-    return openai.ChatCompletion.create
+
+    def f(**kwargs: Any):
+        return openai.ChatCompletion.create(model="gpt-4", **kwargs)
+
+    return f
 
 
 def ghostfunction(

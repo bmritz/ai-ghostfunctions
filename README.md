@@ -40,8 +40,7 @@ def sanitize_messy_string(messy_string: str) -> list[dict]:
 sanitize_messy_string(messy_string="""name|age|nickname
 John Brighton Bradford,  34,  J.B
         Grace B., "24", Grace""")
-
-# "[{'name': 'John Brighton Bradford', 'age': 34, 'nickname': 'J.B'},\n {'name': 'Grace B.', 'age': 24, 'nickname': 'Grace'}]"
+# '[\n    {"name": "John Brighton Bradford", "age": 34, "nickname": "J.B"},\n    {"name": "Grace B.", "age": 24, "nickname": "Grace"}\n]'
 
 @ghostfunction
 def generate_random_words(n: int, startswith: str) -> list:
