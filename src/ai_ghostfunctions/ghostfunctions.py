@@ -87,8 +87,12 @@ def _assert_function_has_return_type_annotation(function: Callable[..., Any]) ->
         )
 
 
-def _parse_ai_result(ai_result, expected_return_type) -> Any:
+def _parse_ai_result(ai_result: Any, expected_return_type: Any) -> Any:
     """Parse the result from the OpenAI API Call and return data.
+
+    Args:
+        ai_result: The return value from the OpenAI API.
+        expected_return_type: The expected return type of the ghostfunction.
 
     Raises:
         typeguard.TypeCheckError if the ai result is not parsable to `expected_return_type`

@@ -1,4 +1,5 @@
 import inspect
+from typing import Any
 from typing import Dict
 from typing import List
 from unittest.mock import Mock
@@ -121,7 +122,7 @@ def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
     ],
 )
 def test_ghostfunction_decorator_returns_expected_type(
-    expected_result, annotation
+    expected_result: Any, annotation: Any
 ) -> None:
     mock_return_result = str(expected_result)
 
@@ -137,7 +138,7 @@ def test_ghostfunction_decorator_returns_expected_type(
     ) as patched:
 
         @ghostfunction
-        def generate_n_random_words(n: int, startswith: str) -> annotation:  # type: ignore[empty-body]
+        def generate_n_random_words(n: int, startswith: str) -> annotation:
             """Return a list of `n` random words that start with `startswith`."""
             pass
 
