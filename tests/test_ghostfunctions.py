@@ -1,4 +1,6 @@
 import inspect
+from typing import Any
+from typing import Dict
 from typing import List
 from unittest.mock import Mock
 from unittest.mock import patch
@@ -24,11 +26,12 @@ def test_aicallable_function_decorator_has_same_signature() -> None:
 
 
 def test_aicallable_function_decorator() -> None:
-    expected_result = "returned value from openai"
+    expected_result = ["returned value from openai"]
+    mock_return_result = str(expected_result)
 
     mock_callable = Mock(
         return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": expected_result}}]}
+            {"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -49,11 +52,12 @@ def test_aicallable_function_decorator() -> None:
 
 
 def test_aicallable_function_decorator_with_open_close_parens() -> None:
-    expected_result = "returned value from openai"
+    expected_result = ["returned value from openai"]
+    mock_return_result = str(expected_result)
 
     mock_callable = Mock(
         return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": expected_result}}]}
+            {"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -76,11 +80,12 @@ def test_aicallable_function_decorator_with_open_close_parens() -> None:
 def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
     new_prompt = [Message(role="user", content="this is a new prompt")]
 
-    expected_result = "returned value from openai"
+    expected_result = ["returned value from openai"]
+    mock_return_result = str(expected_result)
 
     mock_callable = Mock(
         return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": expected_result}}]}
+            {"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -98,7 +103,49 @@ def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
         patched.assert_called_once()
     mock_callable.assert_called_once_with(messages=new_prompt)
 
-    assert result == "returned value from openai"
+    assert result == expected_result
+
+
+@pytest.mark.parametrize(
+    "expected_result,annotation",
+    [
+        ("return a string", str),
+        (b"return bytes", bytes),
+        (1.23, float),
+        (11, int),
+        (("return", "tuple"), tuple),
+        (["return", "list"], List[str]),
+        ({"return": "dict"}, Dict[str, str]),
+        ({"return", "set"}, set),
+        (True, bool),
+        (None, None),
+    ],
+)
+def test_ghostfunction_decorator_returns_expected_type(
+    expected_result: Any, annotation: Any
+) -> None:
+    mock_return_result = str(expected_result)
+
+    mock_callable = Mock(
+        return_value=openai.openai_object.OpenAIObject.construct_from(
+            {"choices": [{"message": {"content": mock_return_result}}]}
+        )
+    )
+    with patch.object(
+        ai_ghostfunctions.ghostfunctions,
+        "_default_ai_callable",
+        return_value=mock_callable,
+    ) as patched:
+
+        @ghostfunction
+        def generate_n_random_words(n: int, startswith: str) -> annotation:
+            """Return a list of `n` random words that start with `startswith`."""
+            pass
+
+        result = generate_n_random_words(n=5, startswith="goo")
+        patched.assert_called_once()
+
+    assert result == expected_result
 
 
 def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:

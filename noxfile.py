@@ -140,6 +140,9 @@ def precommit(session: Session) -> None:
         "pre-commit-hooks",
         "pyupgrade",
     )
+
+    # todo: we could update the location of the .pre-commit-config.yl
+    # https://pre-commit.com/#command-line-interface
     session.run("pre-commit", *args)
     if args and args[0] == "install":
         activate_virtualenv_in_precommit_hooks(session)

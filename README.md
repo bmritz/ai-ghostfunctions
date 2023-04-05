@@ -17,65 +17,69 @@ Write the docstring, call the function, get the results.
 ## Installation
 
 ```console
-$ pip install ai-ghostfunctions
+pip install ai-ghostfunctions
 ```
 
 ## Quickstart
 
+To see it in action, save your OpenAI API Key to the env var `OPENAI_API_KEY` and run:
+
 ```python
-import os
-from ai_ghostfunctions import ghostfunction
+>>> import os
+>>> from ai_ghostfunctions import ghostfunction
 
-assert os.getenv("OPENAI_API_KEY")
+>>> assert os.getenv("OPENAI_API_KEY")
 
-@ghostfunction
-def sanitize_messy_string(messy_string: str) -> list[dict]:
-    """Return a list of dicts that contain the data from `messy_string`."""
-    pass
+>>> @ghostfunction
+>>> def sanitize_messy_string(messy_string: str) -> list[dict]:
+>>>     """Return a list of dicts that contain the data from `messy_string`."""
+>>>     pass
 
-@ghostfunction
-def generate_random_words(n: int, startswith: str) -> list:
-    """Return a list of `n` random words that start with `startswith`."""
-    pass
-
-sanitize_messy_string(messy_string="""name|age|nickname
+>>> sanitize_messy_string(messy_string="""name|age|nickname
 John Brighton Bradford,  34,  J.B
-        Grace B., "24", Grace""")
-# '[\n    {"name": "John Brighton Bradford", "age": 34, "nickname": "J.B"},\n    {"name": "Grace B.", "age": 24, "nickname": "Grace"}\n]'
+     Grace B., "24", Grace""")
 
-generate_random_words(n=4, startswith="goo")
-# "['gooze', 'goonie', 'gooble', 'goodum']"
+[{'name': 'John Brighton Bradford', 'age': 34, 'nickname': 'J.B'},
+ {'name': 'Grace B.', 'age': 24, 'nickname': 'Grace'}]
 
-generate_random_words(n=3, startswith="foot")
-# "['football', 'footstep', 'footnote']"
+###
+
+>>> @ghostfunction
+>>> def generate_random_words(n: int, startswith: str) -> list:
+>>>     """Return a list of `n` random words that start with `startswith`."""
+>>>     pass
+
+>>> generate_random_words(n=4, startswith="goo")
+['goofy', 'google', 'goose', 'goodness']
+
+>>> generate_random_words(n=3, startswith="foot")
+['football', 'footnote', 'footprint']
 ```
 
 By default, a ghostfunction will dispatch a sensible prompt to OpenAI GPT-4 that includes the function name, the docstring, and function arguments, parse the result from OpenAI and return it as the result of the function.
 
 Ghostfunctions will retry and send the data to gpt-3.5-turbo if it looks like the OPENAI_API_KEY does not have access to gpt-4.
 
-Yes, it returns strings for now. I'll update that probably soon, so expect a breaking change there.
-
 ## Customizations
 
 You can control the prompt:
 
 ```python
-import os
-from ai_ghostfunctions import ghostfunction
-from ai_ghostfunctions.keywords import USER
-from ai_ghostfunctions.types import Message
+>>> import os
+>>> from ai_ghostfunctions import ghostfunction
+>>> from ai_ghostfunctions.keywords import USER
+>>> from ai_ghostfunctions.types import Message
 
-assert os.getenv("OPENAI_API_KEY")
+>>> assert os.getenv("OPENAI_API_KEY")
 
-@ghostfunction(prompt_function=lambda f, **kwargs: [
-    Message(role=USER, content=f"tell me a slightly insulting joke about this function name: {f.__name__}.")
-])
-def recursive_function_that_will_recurse():
-    """Recurse until you go crazy."""
-    pass
+>>> @ghostfunction(prompt_function=lambda f, **kwargs: [
+>>>     Message(role=USER, content=f"tell me a slightly insulting joke about this function name: {f.__name__}.")
+>>> ])
+>>> def recursive_function_that_will_recurse():
+>>>     """Recurse until you go crazy."""
+>>>     pass
 
-recursive_function_that_will_recurse()
+>>> recursive_function_that_will_recurse()
 # 'Why did the programmer name his function "recursive_function_that_will_recurse"? Because he wanted to make absolutely sure that no one would confuse it for a function that actually does something useful.'
 ```
 
@@ -85,24 +89,22 @@ Prompts to gpt-4 and gpt-3.5-turbo are of type `List[ai_ghostfunctions.types.Mes
 
 See [ghostfunctions.py](./src/ai_ghostfunctions/ghostfunctions.py#L34) for the default prompt.
 
-## Requirements
-
-- [![Python Version](https://img.shields.io/pypi/pyversions/ai-ghostfunctions)][pypi status]
-- openai Python client library
-
-## Contributing
-
-Contributions are very welcome.
-To learn more, see the [Contributor Guide].
-
 ## License
 
 [![License](https://img.shields.io/github/license/bmritz/ai-ghostfunctions)][license] _AI Ghostfunctions_ is free and open source software.
 
+## Requirements
+
+See [pyproject.toml](https://github.com/bmritz/ai-ghostfunctions/blob/main/pyproject.toml#L18) for a list of dependencies.
+
+## Contributing
+
+Contributions are very welcome.
+To learn more about setting up a dev environment and contributing back to the project, see the [Contributor Guide].
+
 ## Issues
 
-If you encounter any problems,
-please [file an issue] along with a detailed description.
+If you encounter any problems, please [file an issue] along with a detailed description.
 
 ## Credits
 
