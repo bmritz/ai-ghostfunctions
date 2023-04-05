@@ -4,6 +4,7 @@ from unittest.mock import Mock
 from unittest.mock import patch
 
 import openai
+import pytest
 
 import ai_ghostfunctions.ghostfunctions
 from ai_ghostfunctions import ghostfunction
@@ -98,3 +99,24 @@ def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
     mock_callable.assert_called_once_with(messages=new_prompt)
 
     assert result == "returned value from openai"
+
+
+def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:
+    expected_result = "returned value from openai"
+
+    mock_callable = Mock(
+        return_value=openai.openai_object.OpenAIObject.construct_from(
+            {"choices": [{"message": {"content": expected_result}}]}
+        )
+    )
+    with patch.object(
+        ai_ghostfunctions.ghostfunctions,
+        "_default_ai_callable",
+        return_value=mock_callable,
+    ):
+        with pytest.raises(ValueError):
+
+            @ghostfunction
+            def f(a: int):
+                """This is an example that doesn't have a return annotation."""
+                pass
