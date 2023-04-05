@@ -119,7 +119,7 @@ def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:
         with pytest.raises(ValueError):
 
             @ghostfunction
-            def f(a: int):
+            def f(a: int):  # type: ignore[no-untyped-def]
                 """This is an example that doesn't have a return annotation."""
                 pass
 
@@ -132,6 +132,6 @@ def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:
         with pytest.raises(ValueError):
 
             @ghostfunction()
-            def f2(a: int):
+            def f2(a: int):  # type: ignore[no-untyped-def]
                 """This is an example that doesn't have a return annotation."""
                 pass

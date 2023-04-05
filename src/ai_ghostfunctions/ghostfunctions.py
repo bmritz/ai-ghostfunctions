@@ -78,7 +78,7 @@ def _default_ai_callable() -> Callable[..., openai.openai_object.OpenAIObject]:
     return f
 
 
-def _assert_function_has_return_type_annotation(function: Callable) -> None:
+def _assert_function_has_return_type_annotation(function: Callable[..., Any]) -> None:
     if get_type_hints(function).get("return") is None:
         raise ValueError(
             f"Function {function.__name__} must have a return type annotation."
