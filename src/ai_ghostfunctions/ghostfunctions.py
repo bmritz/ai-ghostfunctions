@@ -78,7 +78,7 @@ def _default_ai_callable() -> Callable[..., openai.openai_object.OpenAIObject]:
     return f
 
 
-def _assert_function_has_return_type(function: Callable) -> None:
+def _assert_function_has_return_type_annotation(function: Callable) -> None:
     if get_type_hints(function).get("return") is None:
         raise ValueError(
             f"Function {function.__name__} must have a return type annotation."
@@ -110,7 +110,7 @@ def ghostfunction(
         ai_callable = _default_ai_callable()
 
     if function is not None:
-        _assert_function_has_return_type(function)
+        _assert_function_has_return_type_annotation(function)
 
         @wraps(function)
         def wrapper(**kwargs_inner: Any) -> str:
@@ -126,7 +126,7 @@ def ghostfunction(
         def new_decorator(
             function_to_be_decorated: Callable[..., Any]
         ) -> Callable[..., Any]:
-            _assert_function_has_return_type(function_to_be_decorated)
+            _assert_function_has_return_type_annotation(function_to_be_decorated)
 
             @wraps(function_to_be_decorated)
             def wrapper(**kwargs_inner: Any) -> str:
