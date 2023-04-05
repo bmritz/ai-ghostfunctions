@@ -6,6 +6,7 @@ from typing import Any
 from typing import Callable
 from typing import List
 from typing import Optional
+from typing import get_type_hints
 
 import openai
 
@@ -22,6 +23,7 @@ def _make_chatgpt_message_from_function(
     prompt = (
         f"from mymodule import {f.__name__}\n"
         f"""
+# The return type annotation for the function {f.__name__} is {get_type_hints(f)['return']}
 # The docstring for the function {f.__name__} is the following:
 # {f.__doc__}
 result = {f.__name__}({",".join(f"{k}={kwargs[k].__repr__()}" for k in sig.parameters)})
@@ -101,6 +103,10 @@ def ghostfunction(
         ai_callable = _default_ai_callable()
 
     if function is not None:
+        if get_type_hints(function).get("return") is None:
+            raise ValueError(
+                f"Function {function.__name__} must have a return type annotation."
+            )
 
         @wraps(function)
         def wrapper(**kwargs_inner: Any) -> str:
