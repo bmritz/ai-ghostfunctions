@@ -122,6 +122,13 @@ def ghostfunction(
         def new_decorator(
             function_to_be_decorated: Callable[..., Any]
         ) -> Callable[..., Any]:
+            if get_type_hints(function_to_be_decorated).get("return") is None:
+                msg = (
+                    f"Function {function_to_be_decorated.__name__} must have"
+                    " a return type annotation."
+                )
+                raise ValueError(msg)
+
             @wraps(function_to_be_decorated)
             def wrapper(**kwargs_inner: Any) -> str:
                 prompt = prompt_function(function_to_be_decorated, **kwargs_inner)

@@ -109,6 +109,8 @@ def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:
             {"choices": [{"message": {"content": expected_result}}]}
         )
     )
+
+    # test with bare ghostfunction
     with patch.object(
         ai_ghostfunctions.ghostfunctions,
         "_default_ai_callable",
@@ -118,5 +120,18 @@ def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:
 
             @ghostfunction
             def f(a: int):
+                """This is an example that doesn't have a return annotation."""
+                pass
+
+    # test with ghostfunction with open-close parens
+    with patch.object(
+        ai_ghostfunctions.ghostfunctions,
+        "_default_ai_callable",
+        return_value=mock_callable,
+    ):
+        with pytest.raises(ValueError):
+
+            @ghostfunction()
+            def f2(a: int):
                 """This is an example that doesn't have a return annotation."""
                 pass
