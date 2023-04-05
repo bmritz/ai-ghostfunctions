@@ -10,6 +10,7 @@ from typing import Optional
 from typing import get_type_hints
 
 import openai
+import typeguard
 
 from .keywords import ASSISTANT
 from .keywords import SYSTEM
@@ -86,6 +87,23 @@ def _assert_function_has_return_type_annotation(function: Callable[..., Any]) ->
         )
 
 
+def _parse_ai_result(ai_result, expected_return_type) -> Any:
+    """Parse the result from the OpenAI API Call and return data.
+
+    Raises:
+        typeguard.TypeCheckError if the ai result is not parsable to `expected_return_type`
+
+    Returns:
+        The data from the ai result (data is of type `expected_return_type`)
+
+    """
+    to_return: str = ai_result["choices"][0]["message"]["content"]
+    if expected_return_type is str:
+        return to_return
+    data = ast.literal_eval(to_return)
+    return typeguard.check_type(data, expected_return_type)
+
+
 def ghostfunction(
     function: Optional[Callable[..., Any]] = None,
     /,
@@ -112,13 +130,15 @@ def ghostfunction(
 
     if function is not None:
         _assert_function_has_return_type_annotation(function)
+        return_type_annotation = get_type_hints(function)["return"]
 
         @wraps(function)
         def wrapper(**kwargs_inner: Any) -> Any:
             prompt = prompt_function(function, **kwargs_inner)  # type: ignore[arg-type]
             ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
-            to_return: str = ai_result["choices"][0]["message"]["content"]
-            return ast.literal_eval(to_return)
+            return _parse_ai_result(
+                ai_result=ai_result, expected_return_type=return_type_annotation
+            )
 
         return wrapper
 
@@ -128,13 +148,15 @@ def ghostfunction(
             function_to_be_decorated: Callable[..., Any]
         ) -> Callable[..., Any]:
             _assert_function_has_return_type_annotation(function_to_be_decorated)
+            return_type_annotation = get_type_hints(function_to_be_decorated)["return"]
 
             @wraps(function_to_be_decorated)
             def wrapper(**kwargs_inner: Any) -> Any:
                 prompt = prompt_function(function_to_be_decorated, **kwargs_inner)
                 ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
-                to_return: str = ai_result["choices"][0]["message"]["content"]
-                return ast.literal_eval(to_return)
+                return _parse_ai_result(
+                    ai_result=ai_result, expected_return_type=return_type_annotation
+                )
 
             return wrapper
 
