@@ -9,7 +9,7 @@ help:	## Show this help. (Default target)
 
 .DEFAULT_GOAL := help
 
-.PHONY : install install-poetry run-nox-all run-nox-session format run-quick-test ipython-shell
+.PHONY : install install-poetry run-nox-all run-nox-session format run-quick-test ipython-shell new-version
 
 install-poetry: .poetry/bin/poetry	## Install poetry in the project.
 	$< install
@@ -41,8 +41,16 @@ format: .poetry/bin/poetry	## Format the code by running isort and black on the 
 	$< run isort .
 	$< run black .
 
+new-version: 	## Release a new version Use: make new-version-<patch|minor|major|prepatch|preminor|premajor|prerelease>
+	@echo "NOTE: please run make new-version-<patch|minor|major|prepatch|preminor|premajor|prerelease> to make a new version"
+
 new-version-%: .poetry/bin/poetry	## Make a new version. Use: make new-version-<patch|minor|major|prepatch|preminor|premajor|prerelease>
 	$< version -- $*
-
+	$(eval NEW_VERSION = $(shell $< version -s))
+	@echo NOTE: You must now commit and push the changes made by the make $@ command to initialize the release action on Github.
+	@echo Suggested commands:
+	@echo     git add pyproject.toml
+	@echo     git commit -m \'Release v$(NEW_VERSION)\'
+	@echo     git push
 guard-%: .poetry/bin/poetry		## Used to ensure an env var is available for a target that depends on guard-%
 	@if [ -z '${${*}}' ]; then echo 'Variable $* not set. You can set it with $*=VALUE make ...' && exit 1; fi
