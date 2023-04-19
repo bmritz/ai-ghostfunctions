@@ -22,12 +22,18 @@ def _make_chatgpt_message_from_function(
     f: Callable[..., Any], **kwargs: Any
 ) -> Message:
     sig = inspect.signature(f)
+    if not f.__doc__:
+        raise ValueError("The function must have a docstring.")
     prompt = (
-        f"from mymodule import {f.__name__}\n"
-        f"""
+        (
+            f"from mymodule import {f.__name__}\n"
+            f"""
 # The return type annotation for the function {f.__name__} is {get_type_hints(f)['return']}
 # The docstring for the function {f.__name__} is the following:
-# {f.__doc__}
+"""
+        )
+        + "\n".join([f"# {line}" for line in f.__doc__.split("\n")])
+        + f"""
 result = {f.__name__}({",".join(f"{k}={kwargs[k].__repr__()}" for k in sig.parameters)})
 print(result)
 """
