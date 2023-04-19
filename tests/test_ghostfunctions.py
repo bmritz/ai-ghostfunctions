@@ -203,7 +203,7 @@ def test_ghostfunction_decorator_errors_if_no_docstring() -> None:
                 pass
 
 
-def toy_function(x: str) -> str:
+def toy_function(x: str) -> str:  # type: ignore[empty-body]
     """This is.
 
     multiline
