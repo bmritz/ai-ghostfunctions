@@ -117,4 +117,5 @@ git checkout main
 git pull
 make new-version-<patch|minor|major|prepatch|preminor|premajor|prerelease>
 git add pyproject.toml
+git commit -m 'release new version'
 git push
