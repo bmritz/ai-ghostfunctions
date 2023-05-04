@@ -241,7 +241,7 @@ def test__make_chatgpt_message_from_function_works_well_with_multiline_docstring
     ],
 )
 def test___parse_ai_result(
-    ai_result, expected_return_type, expected_function_result
+    ai_result: str, expected_return_type: Any, expected_function_result: Any
 ) -> None:
     ai_result_wrapper = {"choices": [{"message": {"content": ai_result}}]}
     assert (
