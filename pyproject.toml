@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ai-ghostfunctions"
-version = "0.3.1"
+version = "0.3.2"
 description = "AI Ghostfunctions"
 authors = ["Brian M. Ritz <brianmritz@gmail.com>"]
 license = "MIT"
