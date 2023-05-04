@@ -230,3 +230,23 @@ def test__make_chatgpt_message_from_function_works_well_with_multiline_docstring
         "result = toy_function(x='this')\n"
         "print(result)\n"
     )
+
+
+@pytest.mark.parametrize(
+    "ai_result,expected_return_type,expected_function_result",
+    [
+        ("a bare string", str, "a bare string"),
+        ('"a double quoted string"', str, "a double quoted string"),
+        ("'a single quoted string'", str, "a single quoted string"),
+    ],
+)
+def test___parse_ai_result(
+    ai_result, expected_return_type, expected_function_result
+) -> None:
+    ai_result_wrapper = {"choices": [{"message": {"content": ai_result}}]}
+    assert (
+        ai_ghostfunctions.ghostfunctions._parse_ai_result(
+            ai_result_wrapper, expected_return_type
+        )
+        == expected_function_result
+    )
