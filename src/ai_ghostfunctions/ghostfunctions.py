@@ -19,9 +19,13 @@ from .types import Message
 
 
 def _make_chatgpt_message_from_function(
-    f: Callable[..., Any], **kwargs: Any
+    f: Callable[..., Any], *args: Any, **kwargs: Any
 ) -> Message:
     sig = inspect.signature(f)
+    if args:
+        params = list(sig.parameters)
+        for i, arg in enumerate(args):
+            kwargs[params[i]] = arg
     if not f.__doc__:
         raise ValueError("The function must have a docstring.")
     prompt = (
@@ -41,7 +45,9 @@ print(result)
     return Message(role=USER, content=prompt)
 
 
-def _default_prompt_creation(f: Callable[..., Any], **kwargs: Any) -> List[Message]:
+def _default_prompt_creation(
+    f: Callable[..., Any], *args: Any, **kwargs: Any
+) -> List[Message]:
     return [
         Message(
             role=SYSTEM,
@@ -64,7 +70,7 @@ def _default_prompt_creation(f: Callable[..., Any], **kwargs: Any) -> List[Messa
                 " I will return the output, and nothing else."
             ),
         ),
-        _make_chatgpt_message_from_function(f, **kwargs),
+        _make_chatgpt_message_from_function(f, *args, **kwargs),
     ]
 
 
@@ -148,8 +154,8 @@ def ghostfunction(
         return_type_annotation = get_type_hints(function)["return"]
 
         @wraps(function)
-        def wrapper(**kwargs_inner: Any) -> Any:
-            prompt = prompt_function(function, **kwargs_inner)  # type: ignore[arg-type]
+        def wrapper(*args_inner: Any, **kwargs_inner: Any) -> Any:
+            prompt = prompt_function(function, *args_inner, **kwargs_inner)  # type: ignore[arg-type]
             ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
             return _parse_ai_result(
                 ai_result=ai_result, expected_return_type=return_type_annotation
