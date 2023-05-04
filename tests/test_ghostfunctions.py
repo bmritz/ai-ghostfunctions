@@ -148,6 +148,39 @@ def test_ghostfunction_decorator_returns_expected_type(
     assert result == expected_result
 
 
+@pytest.mark.parametrize(
+    "expected_result,annotation",
+    [
+        ("return a string", str),
+    ],
+)
+def test_ghostfunction_can_be_called_with_positional_arguments(
+    expected_result: Any, annotation: Any
+) -> None:
+    mock_return_result = str(expected_result)
+
+    mock_callable = Mock(
+        return_value=openai.openai_object.OpenAIObject.construct_from(
+            {"choices": [{"message": {"content": mock_return_result}}]}
+        )
+    )
+    with patch.object(
+        ai_ghostfunctions.ghostfunctions,
+        "_default_ai_callable",
+        return_value=mock_callable,
+    ):
+
+        @ghostfunction
+        def generate_n_random_words(n: int, startswith: str) -> annotation:
+            """Return a list of `n` random words that start with `startswith`."""
+            pass
+
+        result = generate_n_random_words(5, "goo")
+        result2 = generate_n_random_words(5, startswith="goo")
+
+    assert result == result2 == expected_result
+
+
 def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:
     expected_result = "returned value from openai"
 
