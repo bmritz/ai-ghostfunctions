@@ -109,7 +109,12 @@ def _parse_ai_result(ai_result: Any, expected_return_type: Any) -> Any:
     """
     to_return: str = ai_result["choices"][0]["message"]["content"]
     if expected_return_type is str:
+        if to_return.startswith("'") and to_return.endswith("'"):
+            return ast.literal_eval(to_return)
+        elif to_return.startswith('"') and to_return.endswith('"'):
+            return ast.literal_eval(to_return)
         return to_return
+
     data = ast.literal_eval(to_return)
     return typeguard.check_type(data, expected_return_type)
 
