@@ -50,7 +50,7 @@ new-version-%: .poetry/bin/poetry	## Make a new version. Use: make new-version-<
 	@echo NOTE: You must now commit and push the changes made by the make $@ command to initialize the release action on Github.
 	@echo Suggested commands:
 	@echo     git add pyproject.toml
-	@echo     git commit -m \'Release v$(NEW_VERSION)\'
+	@echo     git commit -m \'Release New Version\'
 	@echo     git push
 guard-%: .poetry/bin/poetry		## Used to ensure an env var is available for a target that depends on guard-%
 	@if [ -z '${${*}}' ]; then echo 'Variable $* not set. You can set it with $*=VALUE make ...' && exit 1; fi
