@@ -153,6 +153,8 @@ def ghostfunction(
 
     Notes:
         This function is intended to be used as a decorator. See Example.
+        This function expects the env var `OPENAI_API_KEY` to be set the OpenAI API key
+            to be used to make calls to the OpenAI API.
 
     Example:
         >>> # xdoctest: +SKIP
