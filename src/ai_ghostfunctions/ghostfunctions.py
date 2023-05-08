@@ -155,16 +155,17 @@ def ghostfunction(
         This function is intended to be used as a decorator. See Example.
 
     Example:
+        >>> # xdoctest: +SKIP
         >>> from ai_ghostfunctions import ghostfunction
         >>>
         >>> @ghostfunction
-        >>> def generate_random_words(n: int, startswith: str) -> list:
+        >>> def generate_random_words(n: int, startswith: str) -> list:  # xdoctest +SKIP
         >>>     """Return a list of `n` random words that start with `startswith`."""
         >>>     pass
         >>>
         >>> generate_random_words(n=4, startswith="goo")
-        >>> ['goofy', 'google', 'goose', 'goodness']
-
+        ['goofy', 'google', 'goose', 'goodness']
+        >>> # xdoctest: -SKIP
     '''
     if not callable(ai_callable):
         ai_callable = _default_ai_callable()
