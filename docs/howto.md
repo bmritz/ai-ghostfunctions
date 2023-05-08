@@ -28,6 +28,7 @@ One drawback of using ghostfunctions is that the same inputs to a ghostfunction 
 
 ```python
 >>> from functools import lru_cache
+>>> from ai_ghostfunctions import ghostfunction
 >>>
 >>> @lru_cache
 >>> @ghostfunction(ai_callable=query_openai_35)
