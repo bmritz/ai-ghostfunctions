@@ -135,7 +135,7 @@ def ghostfunction(
     ] = _default_prompt_creation,
     **kwargs: Any,
 ) -> Callable[..., Any]:
-    '''Make `function` a ghostfunction, dispatching logic to the AI.
+    '''Decorate `function` to make it a ghostfunction which dispatches logic to the AI.
 
     A ghostfunction is a function that uses OpenAI API to execute the *intent*
     of the function, without manually writing (or generating code). The @ghostfunction
