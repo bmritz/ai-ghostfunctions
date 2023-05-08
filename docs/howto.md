@@ -31,7 +31,7 @@ One drawback of using ghostfunctions is that the same inputs to a ghostfunction 
 >>> from ai_ghostfunctions import ghostfunction
 >>>
 >>> @lru_cache
->>> @ghostfunction(ai_callable=query_openai_35)
+>>> @ghostfunction
 >>> def chaos(seed: int) -> str:
 >>>     """Returns chaos!!!"""
 >>>
