@@ -35,6 +35,13 @@ and/or steps to reproduce the issue.
 
 Request features on the [Issue Tracker].
 
+## How to improve documentation
+
+To get a live-reloading version of the documentation locally, run:
+`NOXSESSION=docs make run-nox-session`.
+
+Make your changes in the `docs/` folder.
+
 ## How to set up your development environment
 
 You need Python 3.8+ and the following tools:
