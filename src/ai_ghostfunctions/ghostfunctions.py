@@ -135,7 +135,12 @@ def ghostfunction(
     ] = _default_prompt_creation,
     **kwargs: Any,
 ) -> Callable[..., Any]:
-    """Make `function` a ghostfunction, dispatching logic to the AI.
+    '''Make `function` a ghostfunction, dispatching logic to the AI.
+
+    A ghostfunction is a function that uses OpenAI API to execute the *intent*
+    of the function, without manually writing (or generating code). The @ghostfunction
+    decorator wraps the function in a sensible prompt, sends the prompt to the OpenAI API,
+    and parses the result into a python object that is returned by the ghostfunction.
 
     Args:
         function: The function to decorate
@@ -145,7 +150,22 @@ def ghostfunction(
 
     Returns:
         Decorated function that will dispatch function logic to OpenAI.
-    """
+
+    Notes:
+        This function is intended to be used as a decorator. See Example.
+
+    Example:
+        >>> from ai_ghostfunctions import ghostfunction
+        >>>
+        >>> @ghostfunction
+        >>> def generate_random_words(n: int, startswith: str) -> list:
+        >>>     """Return a list of `n` random words that start with `startswith`."""
+        >>>     pass
+        >>>
+        >>> generate_random_words(n=4, startswith="goo")
+        >>> ['goofy', 'google', 'goose', 'goodness']
+
+    '''
     if not callable(ai_callable):
         ai_callable = _default_ai_callable()
 
