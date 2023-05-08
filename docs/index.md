@@ -14,7 +14,6 @@ hidden:
 maxdepth: 1
 ---
 
-usage
 How To <howto>
 reference
 contributing
