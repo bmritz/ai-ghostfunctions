@@ -190,38 +190,7 @@ def ghostfunction(
 
         return wrapper
 
-    return new_decorator(function) if function else new_decorator
-
-    if function is not None:
-        _assert_function_has_return_type_annotation(function)
-        return_type_annotation = get_type_hints(function)["return"]
-
-        @wraps(function)
-        def wrapper(*args_inner: Any, **kwargs_inner: Any) -> Any:
-            prompt = prompt_function(function, *args_inner, **kwargs_inner)  # type: ignore[arg-type]
-            ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
-            return _parse_ai_result(
-                ai_result=ai_result, expected_return_type=return_type_annotation
-            )
-
-        return wrapper
-
-    else:
-
-        def new_decorator(
-            function_to_be_decorated: Callable[..., Any]
-        ) -> Callable[..., Any]:
-            _assert_function_has_return_type_annotation(function_to_be_decorated)
-            return_type_annotation = get_type_hints(function_to_be_decorated)["return"]
-
-            @wraps(function_to_be_decorated)
-            def wrapper(**kwargs_inner: Any) -> Any:
-                prompt = prompt_function(function_to_be_decorated, **kwargs_inner)
-                ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
-                return _parse_ai_result(
-                    ai_result=ai_result, expected_return_type=return_type_annotation
-                )
-
-            return wrapper
-
-        return new_decorator
+    # to work around mypy:
+    # https://github.com/python/mypy/issues/10740#issuecomment-878622464
+    f: Callable[..., Any] = new_decorator
+    return new_decorator(function) if function else f
