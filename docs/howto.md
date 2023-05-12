@@ -7,6 +7,8 @@ This section of the documentation contains common code snippets for common tasks
 By default, AI Ghostfunctions will use OpenAI's `gpt-4` model if the OpenAI API Key has access to it, optionally falling back to `gpt-3.5-turbo` if the API request fails with a `openai.InvalidRequestError`. You can configure the model to use `gpt-3.5-turbo` by default by using the `ai_callable` parameter on the `@ghostfunction` decorator:
 
 ```python
+>>> from ai_ghostfunctions import ghostfunction
+>>> import openai
 >>> def query_openai_35(**kwargs):
 >>>     """Query OpenAI API with `query` and return the response."""
 >>>     return openai.ChatCompletion.create(
@@ -46,3 +48,30 @@ One drawback of using ghostfunctions is that the same inputs to a ghostfunction 
 ```
 
 The [`cachetools`](https://cachetools.readthedocs.io/en/latest/]) third-party library also contains other implementations of caching decorators.
+
+## Choose from several different results from OpenAI API
+
+OpenAI exposes a parameter into their [ChatCompletion API](https://platform.openai.com/docs/api-reference/chat-completions/create) to return multiple different responses from the model in a single API call. Ghostfunctions exposes an API to return several of these `choices` from OpenAI, and aggregate them into a final result:
+
+```python
+>>> from ai_ghostfunctions import ghostfunction
+>>> import openai
+>>> def query_openai_35(**kwargs):
+>>>     """Query OpenAI API with `query` and return the response."""
+>>>     return openai.ChatCompletion.create(
+>>>         model='gpt-3.5-turbo',
+>>>         n=5,
+>>>         temperature=.3,
+>>>         **kwargs
+>>>     )
+>>>
+>>> @ghostfunction(
+>>>     ai_callable=query_openai_35,
+>>>     aggregation_function=",".join
+>>> )
+>>> def word_that_starts_with(letter: str = "n") -> str:
+>>>     """Output a word that starts with `letter`."""
+>>>
+>>> word_that_starts_with('n')
+'nose,nose,nose,nose,nose'
+```
