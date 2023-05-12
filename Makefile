@@ -22,11 +22,11 @@ install: install-poetry		## install all dependencies for development
 	$(MAKE) install-poetry
 
 run-nox-all: .poetry/bin/poetry			## Run all nox sessions
-	PATH=$$PATH:$(dir $<) $< run nox
+	@PATH=$$PATH:$(dir $<) $< run nox
 
 run-nox-session: .poetry/bin/poetry guard-NOXSESSION			## Run a specific nox session. Call via something like NOXSESSION=tests-3.10 make run-nox-session
-	# nox needs poetry, so we need to put poetry on the path
-	PATH=$$PATH:$(dir $<) $< run nox -- -s $(NOXSESSION)
+	@# nox needs poetry, so we need to put poetry on the path
+	@PATH=$$PATH:$(dir $<) $< run nox -- -s $(NOXSESSION)
 
 list-of-nox-sessions-print: .poetry/bin/poetry
 	$< run nox --list
@@ -54,3 +54,6 @@ new-version-%: .poetry/bin/poetry	## Make a new version. Use: make new-version-<
 	@echo     git push
 guard-%: .poetry/bin/poetry		## Used to ensure an env var is available for a target that depends on guard-%
 	@if [ -z '${${*}}' ]; then echo 'Variable $* not set. You can set it with $*=VALUE make ...' && exit 1; fi
+
+docs-serve: .poetry/bin/poetry
+	$< sphinx-autobuild docs docs/_build/html
