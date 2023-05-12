@@ -30,7 +30,7 @@ def _make_chatgpt_message_from_function(
         raise ValueError("The function must have a docstring.")
     prompt = (
         (
-            f"from mymodule import {f.__name__}\n"
+            f"from {f.__name__} import {f.__name__}\n"
             f"""
 # The return type annotation for the function {f.__name__} is {get_type_hints(f)['return']}
 # The docstring for the function {f.__name__} is the following:
