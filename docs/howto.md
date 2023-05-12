@@ -60,8 +60,8 @@ OpenAI exposes a parameter into their [ChatCompletion API](https://platform.open
 >>>     """Query OpenAI API with `query` and return the response."""
 >>>     return openai.ChatCompletion.create(
 >>>         model='gpt-3.5-turbo',
->>>         n=5,
->>>         temperature=.3,
+>>>         n=4,
+>>>         temperature=.6,
 >>>         **kwargs
 >>>     )
 >>>
@@ -75,3 +75,5 @@ OpenAI exposes a parameter into their [ChatCompletion API](https://platform.open
 >>> word_that_starts_with('n')
 'nose,nose,nose,nose,nose'
 ```
+
+You can use this functionality to vet responses from the AI.
