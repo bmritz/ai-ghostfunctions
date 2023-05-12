@@ -120,6 +120,7 @@ def _parse_ai_result(
     Args:
         ai_result: The return value from the OpenAI API.
         expected_return_type: The expected return type of the ghostfunction.
+        aggregation_function: Function to aggregate the `n` choices from the OpenAI API.
 
     Raises:
         typeguard.TypeCheckError if the ai result is not parsable to `expected_return_type`
