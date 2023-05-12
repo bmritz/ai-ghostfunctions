@@ -148,6 +148,35 @@ def test_ghostfunction_decorator_returns_expected_type(
     assert result == expected_result
 
 
+def test_ghostfunction_decorator_with_custom_agg_function() -> None:
+    mock_callable = Mock(
+        return_value=openai.openai_object.OpenAIObject.construct_from(
+            {
+                "choices": [
+                    {"message": {"content": "good"}},
+                    {"message": {"content": "goose"}},
+                    {"message": {"content": "goodness"}},
+                ]
+            }
+        )
+    )
+    with patch.object(
+        ai_ghostfunctions.ghostfunctions,
+        "_default_ai_callable",
+        return_value=mock_callable,
+    ) as patched:
+
+        @ghostfunction(aggregation_function=lambda choices: ",".join(choices))
+        def generate_n_random_words(n: int, startswith: str) -> str:  # type: ignore[empty-body]
+            """Return a list of `n` random words that start with `startswith`."""
+            pass
+
+        result = generate_n_random_words(n=5, startswith="goo")
+        patched.assert_called_once()
+
+    assert result == "good,goose,goodness"
+
+
 @pytest.mark.parametrize(
     "expected_result,annotation",
     [
@@ -171,6 +200,34 @@ def test_ghostfunction_can_be_called_with_positional_arguments(
     ):
 
         @ghostfunction
+        def generate_n_random_words(n: int, startswith: str) -> annotation:
+            """Return a list of `n` random words that start with `startswith`."""
+            pass
+
+        result = generate_n_random_words(5, "goo")
+        result2 = generate_n_random_words(5, startswith="goo")
+
+    with patch.object(
+        ai_ghostfunctions.ghostfunctions,
+        "_default_ai_callable",
+        return_value=mock_callable,
+    ):
+
+        @ghostfunction()
+        def generate_n_random_words(n: int, startswith: str) -> annotation:
+            """Return a list of `n` random words that start with `startswith`."""
+            pass
+
+        result = generate_n_random_words(5, "goo")
+        result2 = generate_n_random_words(5, startswith="goo")
+
+    with patch.object(
+        ai_ghostfunctions.ghostfunctions,
+        "_default_ai_callable",
+        return_value=mock_callable,
+    ):
+
+        @ghostfunction(ai_callable=mock_callable)
         def generate_n_random_words(n: int, startswith: str) -> annotation:
             """Return a list of `n` random words that start with `startswith`."""
             pass
@@ -279,7 +336,30 @@ def test___parse_ai_result(
     ai_result_wrapper = {"choices": [{"message": {"content": ai_result}}]}
     assert (
         ai_ghostfunctions.ghostfunctions._parse_ai_result(
-            ai_result_wrapper, expected_return_type
+            ai_result_wrapper,
+            expected_return_type,
         )
         == expected_function_result
+    )
+
+
+def test___parse_ai_result_non_default_agg_function() -> None:
+    ai_result_wrapper = {
+        "choices": [
+            {"message": {"content": "c1"}},
+            {"message": {"content": "c2"}},
+            {"message": {"content": "c3"}},
+        ]
+    }
+    assert (
+        ai_ghostfunctions.ghostfunctions._parse_ai_result(
+            ai_result_wrapper, str, aggregation_function=lambda x: x[1]
+        )
+        == "c2"
+    )
+    assert (
+        ai_ghostfunctions.ghostfunctions._parse_ai_result(
+            ai_result_wrapper, str, aggregation_function=",".join
+        )
+        == "c1,c2,c3"
     )
