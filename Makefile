@@ -34,6 +34,10 @@ list-of-nox-sessions-print: .poetry/bin/poetry
 run-quick-test: .poetry/bin/poetry			## Run all nox sessions
 	$< run pytest
 
+run-quick-mypy: .poetry/bin/poetry			## Run all nox sessions
+	$< run mypy .
+
+
 ipython-shell: .poetry/bin/poetry	## Fire up an ipython shell with dependencies available in the environment.
 	$< run ipython
 
