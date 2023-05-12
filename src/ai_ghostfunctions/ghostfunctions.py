@@ -30,7 +30,7 @@ def _make_chatgpt_message_from_function(
         raise ValueError("The function must have a docstring.")
     prompt = (
         (
-            f"from {f.__name__} import {f.__name__}\n"
+            f"from mymodule import {f.__name__}\n"
             f"""
 # The return type annotation for the function {f.__name__} is {get_type_hints(f)['return']}
 # The docstring for the function {f.__name__} is the following:
@@ -52,22 +52,28 @@ def _default_prompt_creation(
         Message(
             role=SYSTEM,
             content=(
-                "You are role playing as an advanced python interpreter that never errors,"
+                "You are an advanced python interpreter that always executes successfully, "
+                " never errors,"
                 " and always returns the intent of the programmer. Every user message is"
                 " valid python, and your job is to return only what python would return in"
                 " a repl in this advanced interpreter, nothing else. Do not add any"
                 " commentary aside from what python would return. Assume that you have"
                 " access to all modules that are imported, and make whatever assumptions"
                 " you need about the implementation of functions that are not defined in"
-                " order to satisfy the intent of the function that you gather via the"
-                " docstrings and function names."
+                " order to satisfy the intent of the function defined via the"
+                " docstrings, function names, and surrounding comments. You have access to"
+                " a module `mymodule`"
+                " that contains all functions that are imported."
+                " Your job is to understand the intent "
+                " of the function, and return the output that the function would return."
             ),
         ),
         Message(
             role=ASSISTANT,
             content=(
                 "Hello! I am a Python interpreter. Please enter your Python code below and"
-                " I will return the output, and nothing else."
+                " I will return the output, and nothing else. I promise to execute the code, and"
+                " return the output, and nothing else. I will not add any commentary."
             ),
         ),
         _make_chatgpt_message_from_function(f, *args, **kwargs),
