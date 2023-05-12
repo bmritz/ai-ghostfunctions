@@ -111,7 +111,9 @@ def _string_to_python_data_structure(string: str, data_type: Any) -> Any:
 
 
 def _parse_ai_result(
-    ai_result: Any, expected_return_type: Any, agg_func: Any = lambda x: x[0]
+    ai_result: Any,
+    expected_return_type: Any,
+    aggregation_function: Any = lambda x: x[0],
 ) -> Any:
     """Parse the result from the OpenAI API Call and return data.
 
@@ -135,8 +137,7 @@ def _parse_ai_result(
         )
         for string in string_contents
     ]
-
-    return typeguard.check_type(agg_func(data), expected_return_type)
+    return typeguard.check_type(aggregation_function(data), expected_return_type)
 
 
 def ghostfunction(
@@ -147,7 +148,7 @@ def ghostfunction(
     prompt_function: Callable[
         [Callable[..., Any]], List[Message]
     ] = _default_prompt_creation,
-    choice_aggregation_function: Callable[..., Any] = lambda x: x[0],
+    aggregation_function: Callable[..., Any] = lambda x: x[0],
     **kwargs: Any,
 ) -> Callable[..., Any]:
     '''Decorate `function` to make it a ghostfunction which dispatches logic to the AI.
@@ -161,7 +162,7 @@ def ghostfunction(
         function: The function to decorate
         ai_callable: Function to receives output of prompt_function and return result.
         prompt_function: Function to turn the function into a prompt.
-        choice_aggregation_function: Function to aggregate the `n` choices from the OpenAI API.
+        aggregation_function: Function to aggregate the `n` choices from the OpenAI API.
             Ghostfunctions passes a list of `n` different results from OpenAI (parsed into python
             data structures) to this function for aggregation into the output of the ghostfunction.
         kwargs: Extra keyword arguments to pass to `ai_callable`.
@@ -205,7 +206,7 @@ def ghostfunction(
             return _parse_ai_result(
                 ai_result=ai_result,
                 expected_return_type=return_type_annotation,
-                agg_func=choice_aggregation_function,
+                aggregation_function=aggregation_function,
             )
 
         return wrapper
