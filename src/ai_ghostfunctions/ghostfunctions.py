@@ -99,7 +99,20 @@ def _assert_function_has_return_type_annotation(function: Callable[..., Any]) ->
         )
 
 
-def _parse_ai_result(ai_result: Any, expected_return_type: Any) -> Any:
+def _string_to_python_data_structure(string: str, data_type: Any) -> Any:
+    if data_type is str:
+        if string.startswith("'") and string.endswith("'"):
+            return ast.literal_eval(string)
+        elif string.startswith('"') and string.endswith('"'):
+            return ast.literal_eval(string)
+        return string
+
+    return ast.literal_eval(string)
+
+
+def _parse_ai_result(
+    ai_result: Any, expected_return_type: Any, agg_func: Any = lambda x: x[0]
+) -> Any:
     """Parse the result from the OpenAI API Call and return data.
 
     Args:
@@ -113,16 +126,17 @@ def _parse_ai_result(ai_result: Any, expected_return_type: Any) -> Any:
         The data from the ai result (data is of type `expected_return_type`)
 
     """
-    to_return: str = ai_result["choices"][0]["message"]["content"]
-    if expected_return_type is str:
-        if to_return.startswith("'") and to_return.endswith("'"):
-            return ast.literal_eval(to_return)
-        elif to_return.startswith('"') and to_return.endswith('"'):
-            return ast.literal_eval(to_return)
-        return to_return
+    # to_return: str = ai_result["choices"][0]["message"]["content"]
+    string_contents = [choice["message"]["content"] for choice in ai_result["choices"]]
+    data = [
+        typeguard.check_type(
+            _string_to_python_data_structure(string, expected_return_type),
+            expected_return_type,
+        )
+        for string in string_contents
+    ]
 
-    data = ast.literal_eval(to_return)
-    return typeguard.check_type(data, expected_return_type)
+    return typeguard.check_type(agg_func(data), expected_return_type)
 
 
 def ghostfunction(
@@ -133,6 +147,7 @@ def ghostfunction(
     prompt_function: Callable[
         [Callable[..., Any]], List[Message]
     ] = _default_prompt_creation,
+    choice_aggregation_function: Callable[..., Any] = lambda x: x[0],
     **kwargs: Any,
 ) -> Callable[..., Any]:
     '''Decorate `function` to make it a ghostfunction which dispatches logic to the AI.
@@ -146,6 +161,9 @@ def ghostfunction(
         function: The function to decorate
         ai_callable: Function to receives output of prompt_function and return result.
         prompt_function: Function to turn the function into a prompt.
+        choice_aggregation_function: Function to aggregate the `n` choices from the OpenAI API.
+            Ghostfunctions passes a list of `n` different results from OpenAI (parsed into python
+            data structures) to this function for aggregation into the output of the ghostfunction.
         kwargs: Extra keyword arguments to pass to `ai_callable`.
 
     Returns:
@@ -185,7 +203,9 @@ def ghostfunction(
             )
             ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
             return _parse_ai_result(
-                ai_result=ai_result, expected_return_type=return_type_annotation
+                ai_result=ai_result,
+                expected_return_type=return_type_annotation,
+                agg_func=choice_aggregation_function,
             )
 
         return wrapper
