@@ -141,4 +141,4 @@ jobs:
           NOXSESSION='coverage -- xml' make run-nox-session
 
       - name: Upload coverage report
-        uses: codecov/codecov-action@v3.1.2
+        uses: codecov/codecov-action@v3.1.4
