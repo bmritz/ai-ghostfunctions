@@ -202,7 +202,7 @@ def ghostfunction(
             prompt = prompt_function(
                 function_to_be_decorated, *args_inner, **kwargs_inner
             )
-            ai_result = ai_callable(messages=prompt, **kwargs)  # type: ignore[misc]
+            ai_result = ai_callable(messages=prompt, **kwargs)
             return _parse_ai_result(
                 ai_result=ai_result,
                 expected_return_type=return_type_annotation,
