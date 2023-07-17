@@ -56,12 +56,10 @@ Install the package with development requirements:
 $ make install
 ```
 
-You can now run an interactive Python session,
-or the command-line interface:
+You can now run an interactive Python session:
 
 ```console
 $ .poetry/bin/poetry run python
-$ .poetry/bin/poetry run ai-ghostfunctions
 ```
 
 ## How to test the project
