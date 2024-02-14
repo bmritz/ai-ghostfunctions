@@ -129,8 +129,6 @@ def _parse_ai_result(
         The data from the ai result (data is of type `expected_return_type`)
 
     """
-    # string_contents = [choice["message"]["content"] for choice in ai_result["choices"]]
-    print(ai_result)
     string_contents = [choice.message.content for choice in ai_result.choices]
     data = [
         typeguard.check_type(
