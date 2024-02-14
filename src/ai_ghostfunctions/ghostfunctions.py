@@ -83,10 +83,10 @@ def _default_ai_callable() -> Callable[..., ChatCompletion]:
     def f(**kwargs: Any) -> ChatCompletion:
         create = client.chat.completions.create
         try:
-            result: ChatCompletion = create(model="gpt-4", **kwargs)  # type: ignore[no-untyped-call]
-        except openai.InvalidRequestError:
+            result: ChatCompletion = create(model="gpt-4", **kwargs)
+        except openai.NotFoundError:
             # user may not have access to gpt-4 yet, perhaps they have 3.5
-            result: ChatCompletion = create(model="gpt-3.5-turbo", **kwargs)  # type: ignore[no-untyped-call,no-redef]
+            result: ChatCompletion = create(model="gpt-3.5-turbo", **kwargs)  # type: ignore[no-redef]
         return result
 
     return f

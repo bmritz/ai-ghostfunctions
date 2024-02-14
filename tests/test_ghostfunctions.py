@@ -19,8 +19,8 @@ def test_aicallable_function_decorator_has_same_signature() -> None:
         pass
 
     with patch.dict(
-        ai_ghostfunctions.ghostfunctions.os.environ, {"OPENAI_API_KEY": "api-key-mock"}
-    ):  # type: ignore[attr-defined]
+        ai_ghostfunctions.ghostfunctions.os.environ, {"OPENAI_API_KEY": "api-key-mock"}  # type: ignore[attr-defined]
+    ):
         decorated_function = ghostfunction(generate_n_random_words)
         assert inspect.signature(decorated_function) == inspect.signature(
             generate_n_random_words
@@ -32,7 +32,7 @@ def test_aicallable_function_decorator() -> None:
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=ChatCompletion.model_construct(
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
             **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
@@ -58,7 +58,7 @@ def test_aicallable_function_decorator_with_open_close_parens() -> None:
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=ChatCompletion.model_construct(
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
             **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
@@ -86,7 +86,7 @@ def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=ChatCompletion.model_construct(
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
             **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
@@ -129,7 +129,7 @@ def test_ghostfunction_decorator_returns_expected_type(
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=ChatCompletion.model_construct(
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
             **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
@@ -152,7 +152,7 @@ def test_ghostfunction_decorator_returns_expected_type(
 
 def test_ghostfunction_decorator_with_custom_agg_function() -> None:
     mock_callable = Mock(
-        return_value=ChatCompletion.model_construct(
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
             **{
                 "choices": [
                     {"message": {"content": "good"}},
@@ -191,7 +191,7 @@ def test_ghostfunction_can_be_called_with_positional_arguments(
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=ChatCompletion.model_construct(
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
             **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
@@ -244,7 +244,7 @@ def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:
     expected_result = "returned value from openai"
 
     mock_callable = Mock(
-        return_value=ChatCompletion.model_construct(
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
             **{"choices": [{"message": {"content": expected_result}}]}
         )
     )
@@ -335,7 +335,7 @@ def test__make_chatgpt_message_from_function_works_well_with_multiline_docstring
 def test___parse_ai_result(
     ai_result: str, expected_return_type: Any, expected_function_result: Any
 ) -> None:
-    ai_result_wrapper = ChatCompletion.model_construct(
+    ai_result_wrapper = ChatCompletion.model_construct(  # type: ignore[attr-defined]
         **{"choices": [{"message": {"content": ai_result}}]}
     )
     assert (
@@ -348,7 +348,7 @@ def test___parse_ai_result(
 
 
 def test___parse_ai_result_non_default_agg_function() -> None:
-    ai_result_wrapper = ChatCompletion.model_construct(
+    ai_result_wrapper = ChatCompletion.model_construct(  # type: ignore[attr-defined]
         **{
             "choices": [
                 {"message": {"content": "c1"}},
