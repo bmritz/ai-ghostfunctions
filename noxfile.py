@@ -25,8 +25,9 @@ except ImportError:
 
 
 package = "ai_ghostfunctions"
-python_version_default = "3.11"
+python_version_default = "3.12"
 python_versions = [
+    "3.12",
     "3.11",
     "3.10",
     "3.9",
