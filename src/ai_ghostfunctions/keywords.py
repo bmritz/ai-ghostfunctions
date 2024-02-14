@@ -1,4 +1,5 @@
 """Keywords for ai-ghostfunctions."""
+
 from typing import get_args
 
 from .types import CompletionType

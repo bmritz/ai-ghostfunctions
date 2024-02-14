@@ -1,4 +1,5 @@
 """Sphinx configuration."""
+
 project = "AI Ghostfunctions"
 author = "Brian M. Ritz"
 copyright = "2023, Brian M. Ritz"

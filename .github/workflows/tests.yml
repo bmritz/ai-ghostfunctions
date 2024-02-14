@@ -14,15 +14,21 @@ jobs:
         include:
           - { python: "3.11", os: "ubuntu-latest", session: "pre-commit" }
           - { python: "3.11", os: "ubuntu-latest", session: "safety" }
+
+          - { python: "3.12", os: "ubuntu-latest", session: "mypy-3.12" }
           - { python: "3.11", os: "ubuntu-latest", session: "mypy-3.11" }
+          - { python: "3.10", os: "ubuntu-latest", session: "mypy-3.10" }
           - { python: "3.9", os: "ubuntu-latest", session: "mypy-3.9" }
           - { python: "3.8", os: "ubuntu-latest", session: "mypy-3.8" }
-          - { python: "3.10", os: "ubuntu-latest", session: "mypy-3.10" }
+
+          - { python: "3.12", os: "ubuntu-latest", session: "tests-3.12" }
           - { python: "3.11", os: "ubuntu-latest", session: "tests-3.11" }
+          - { python: "3.10", os: "ubuntu-latest", session: "tests-3.10" }
           - { python: "3.9", os: "ubuntu-latest", session: "tests-3.9" }
           - { python: "3.8", os: "ubuntu-latest", session: "tests-3.8" }
-          - { python: "3.10", os: "ubuntu-latest", session: "tests-3.10" }
-          - { python: "3.11", os: "macos-latest", session: "tests-3.11" }
+
+          - { python: "3.12", os: "macos-latest", session: "tests-3.12" }
+
           - { python: "3.11", os: "ubuntu-latest", session: "xdoctest-3.11" }
           - { python: "3.11", os: "ubuntu-latest", session: "docs-build" }
 

@@ -8,3 +8,4 @@ rst-roles = class,const,func,meth,mod,ref
 rst-directives = deprecated
 per-file-ignores =
     tests/**:D104,D103,D100
+    noxfile.py:E241,E231,E272,E202

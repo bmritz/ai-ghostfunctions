@@ -1,4 +1,5 @@
 """The AICallable class."""
+
 import ast
 import inspect
 import os
@@ -11,6 +12,7 @@ from typing import get_type_hints
 
 import openai
 import typeguard
+from openai.types.chat.chat_completion import ChatCompletion
 
 from .keywords import ASSISTANT
 from .keywords import SYSTEM
@@ -34,7 +36,7 @@ def _make_chatgpt_message_from_function(
             f"""
 # The return type annotation for the function {f.__name__} is {get_type_hints(f)['return']}
 # The docstring for the function {f.__name__} is the following:
-"""
+"""  # noqa: E231
         )
         + "\n".join([f"# {line}" for line in f.__doc__.split("\n")])
         + f"""
@@ -74,19 +76,17 @@ def _default_prompt_creation(
     ]
 
 
-def _default_ai_callable() -> Callable[..., openai.openai_object.OpenAIObject]:
-    import openai
+def _default_ai_callable() -> Callable[..., ChatCompletion]:
 
-    openai.api_key = os.environ["OPENAI_API_KEY"]
-    openai.organization = os.getenv("OPENAI_ORGANIZATION")
+    client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-    def f(**kwargs: Any) -> openai.openai_object.OpenAIObject:
-        create = openai.ChatCompletion.create
+    def f(**kwargs: Any) -> ChatCompletion:
+        create = client.chat.completions.create
         try:
-            result: openai.openai_object.OpenAIObject = create(model="gpt-4", **kwargs)  # type: ignore[no-untyped-call]
-        except openai.InvalidRequestError:
+            result: ChatCompletion = create(model="gpt-4", **kwargs)
+        except openai.NotFoundError:
             # user may not have access to gpt-4 yet, perhaps they have 3.5
-            result: openai.openai_object.OpenAIObject = create(model="gpt-3.5-turbo", **kwargs)  # type: ignore[no-untyped-call,no-redef]
+            result: ChatCompletion = create(model="gpt-3.5-turbo", **kwargs)  # type: ignore[no-redef]
         return result
 
     return f
@@ -129,7 +129,7 @@ def _parse_ai_result(
         The data from the ai result (data is of type `expected_return_type`)
 
     """
-    string_contents = [choice["message"]["content"] for choice in ai_result["choices"]]
+    string_contents = [choice.message.content for choice in ai_result.choices]
     data = [
         typeguard.check_type(
             _string_to_python_data_structure(string, expected_return_type),
@@ -144,7 +144,7 @@ def ghostfunction(
     function: Optional[Callable[..., Any]] = None,
     /,
     *,
-    ai_callable: Optional[Callable[..., openai.openai_object.OpenAIObject]] = None,
+    ai_callable: Optional[Callable[..., ChatCompletion]] = None,
     prompt_function: Callable[
         [Callable[..., Any]], List[Message]
     ] = _default_prompt_creation,

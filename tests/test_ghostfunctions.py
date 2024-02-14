@@ -5,8 +5,8 @@ from typing import List
 from unittest.mock import Mock
 from unittest.mock import patch
 
-import openai
 import pytest
+from openai.types.chat.chat_completion import ChatCompletion
 
 import ai_ghostfunctions.ghostfunctions
 from ai_ghostfunctions import ghostfunction
@@ -18,7 +18,9 @@ def test_aicallable_function_decorator_has_same_signature() -> None:
         """Return a list of `n` random words that start with `startswith`."""
         pass
 
-    with patch.object(ai_ghostfunctions.ghostfunctions.os, "environ"):  # type: ignore[attr-defined]
+    with patch.dict(
+        ai_ghostfunctions.ghostfunctions.os.environ, {"OPENAI_API_KEY": "api-key-mock"}  # type: ignore[attr-defined]
+    ):
         decorated_function = ghostfunction(generate_n_random_words)
         assert inspect.signature(decorated_function) == inspect.signature(
             generate_n_random_words
@@ -30,8 +32,8 @@ def test_aicallable_function_decorator() -> None:
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": mock_return_result}}]}
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
+            **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -56,8 +58,8 @@ def test_aicallable_function_decorator_with_open_close_parens() -> None:
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": mock_return_result}}]}
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
+            **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -84,8 +86,8 @@ def test_aicallable_function_decorator_with_custom_prompt_function() -> None:
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": mock_return_result}}]}
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
+            **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -127,8 +129,8 @@ def test_ghostfunction_decorator_returns_expected_type(
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": mock_return_result}}]}
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
+            **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -150,8 +152,8 @@ def test_ghostfunction_decorator_returns_expected_type(
 
 def test_ghostfunction_decorator_with_custom_agg_function() -> None:
     mock_callable = Mock(
-        return_value=openai.openai_object.OpenAIObject.construct_from(
-            {
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
+            **{
                 "choices": [
                     {"message": {"content": "good"}},
                     {"message": {"content": "goose"}},
@@ -189,8 +191,8 @@ def test_ghostfunction_can_be_called_with_positional_arguments(
     mock_return_result = str(expected_result)
 
     mock_callable = Mock(
-        return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": mock_return_result}}]}
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
+            **{"choices": [{"message": {"content": mock_return_result}}]}
         )
     )
     with patch.object(
@@ -242,8 +244,8 @@ def test_ghostfunction_decorator_errors_if_no_return_type_annotation() -> None:
     expected_result = "returned value from openai"
 
     mock_callable = Mock(
-        return_value=openai.openai_object.OpenAIObject.construct_from(
-            {"choices": [{"message": {"content": expected_result}}]}
+        return_value=ChatCompletion.model_construct(  # type: ignore[attr-defined]
+            **{"choices": [{"message": {"content": expected_result}}]}
         )
     )
 
@@ -333,7 +335,9 @@ def test__make_chatgpt_message_from_function_works_well_with_multiline_docstring
 def test___parse_ai_result(
     ai_result: str, expected_return_type: Any, expected_function_result: Any
 ) -> None:
-    ai_result_wrapper = {"choices": [{"message": {"content": ai_result}}]}
+    ai_result_wrapper = ChatCompletion.model_construct(  # type: ignore[attr-defined]
+        **{"choices": [{"message": {"content": ai_result}}]}
+    )
     assert (
         ai_ghostfunctions.ghostfunctions._parse_ai_result(
             ai_result_wrapper,
@@ -344,13 +348,15 @@ def test___parse_ai_result(
 
 
 def test___parse_ai_result_non_default_agg_function() -> None:
-    ai_result_wrapper = {
-        "choices": [
-            {"message": {"content": "c1"}},
-            {"message": {"content": "c2"}},
-            {"message": {"content": "c3"}},
-        ]
-    }
+    ai_result_wrapper = ChatCompletion.model_construct(  # type: ignore[attr-defined]
+        **{
+            "choices": [
+                {"message": {"content": "c1"}},
+                {"message": {"content": "c2"}},
+                {"message": {"content": "c3"}},
+            ]
+        }
+    )
     assert (
         ai_ghostfunctions.ghostfunctions._parse_ai_result(
             ai_result_wrapper, str, aggregation_function=lambda x: x[1]

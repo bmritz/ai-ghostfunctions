@@ -1,4 +1,5 @@
 """Nox sessions."""
+
 import os
 import shlex
 import shutil
@@ -8,8 +9,6 @@ from textwrap import dedent
 
 import nox
 
-
-print(os.curdir)
 
 try:
     from nox_poetry import Session
@@ -27,6 +26,7 @@ except ImportError:
 package = "ai_ghostfunctions"
 python_version_default = "3.11"
 python_versions = [
+    "3.12",
     "3.11",
     "3.10",
     "3.9",
