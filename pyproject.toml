@@ -18,7 +18,7 @@ Changelog = "https://github.com/bmritz/ai-ghostfunctions/releases"
 [tool.poetry.dependencies]
 python = "^3.8"
 openai = "^1"
-typeguard = "^3.0.2"
+typeguard = ">=3,<5"
 
 [tool.poetry.group.dev.dependencies]
 Pygments = ">=2.10.0"
