@@ -14,6 +14,13 @@ Write the docstring, call the function, get the results.
 [pre-commit]: https://github.com/pre-commit/pre-commit
 [black]: https://github.com/psf/black
 
+Documentation: https://ai-ghostfunctions.readthedocs.io/
+
+A `ghostfunction` leverages OpenAI GPT-4 to return sensible outputs from functions without
+defined logic. It packages the the function name, docstring, and signature into a prompt
+which is sent to OpenAI's GPT-4 API, and transparently handles coercing the api result
+into the expected return type.
+
 ## Installation
 
 ```console
