@@ -1,4 +1,5 @@
 """The AICallable class."""
+
 import ast
 import inspect
 import os
@@ -34,7 +35,7 @@ def _make_chatgpt_message_from_function(
             f"""
 # The return type annotation for the function {f.__name__} is {get_type_hints(f)['return']}
 # The docstring for the function {f.__name__} is the following:
-"""
+"""  # noqa: E231
         )
         + "\n".join([f"# {line}" for line in f.__doc__.split("\n")])
         + f"""
